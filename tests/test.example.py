@@ -1,11 +1,4 @@
-Fluxo-de-CI-CD/
-├── src/
-│   └── main.py
-├── tests/
-│   └── test_example.py
-└── requirements.txt
-
-  def soma(a, b):
+def soma(a, b):
     return a + b
 
 from src.main import soma
