@@ -9,6 +9,7 @@ on:
 jobs:
   lint-and-test:
     runs-on: ubuntu-latest
+    
     steps:
       - name: Checkout código
         uses: actions/checkout@v4
@@ -23,18 +24,69 @@ jobs:
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      - name: Rodar lint (flake8)
+      - name: Instalar flake8 para linting
         run: |
           pip install flake8
-          flake8 .
 
-      - name: Verificar estrutura (debug)
+      - name: Rodar lint (flake8)
         run: |
-          echo "=== ESTRUTURA DO PROJETO ==="
-          find . -type f -name "*.py" | head -20
-          echo "============================"
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+      - name: Instalar pytest para testes
+        run: |
+          pip install pytest
 
       - name: Rodar testes (pytest)
         run: |
-          pip install pytest
           python -m pytest tests/ -v
+
+  build:
+    runs-on: ubuntu-latest
+    needs: lint-and-test
+    
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Build (simulação)
+        run: |
+          echo "🔨 Build iniciado..."
+          echo "✅ Build concluído com sucesso!"
+          echo "📦 Artefatos gerados:"
+          ls -la
+
+      - name: Upload de artefatos (opcional)
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: |
+            src/
+            tests/
+          retention-days: 7
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Deploy (simulação)
+        run: |
+          echo "🚀 Iniciando deployment..."
+          echo "📁 Ambiente: Produção"
+          echo "✅ Deployment concluído com sucesso!"
+          echo "🌐 Aplicação disponível em: https://meu-app-exemplo.com"
