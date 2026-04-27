@@ -1,0 +1,58 @@
+name: Discord Alerts
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - '.github/workflows/**'
+  pull_request:
+    types: [closed]
+    branches: [ main ]
+
+jobs:
+  send-discord-alert:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Send Discord notification for push
+        if: github.event_name == 'push'
+        uses: tsickert/discord-webhook@v5.0.0
+        with:
+          webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          content: |
+            🚀 **Novo commit enviado para o branch main!**
+            
+            **Repositório:** ${{ github.repository }}
+            **Autor:** ${{ github.actor }}
+            **Commit:** ${{ github.event.head_commit.message }}
+            **Branch:** ${{ github.ref_name }}
+            **Hash:** `${{ github.sha }}`
+            
+            🔗 [Ver no GitHub](${{ github.event.head_commit.url }})
+            
+            💡 **Próximos passos:** Lembre-se de testar localmente antes de fazer push!
+      
+      - name: Send Discord notification for merge
+        if: github.event_name == 'pull_request' && github.event.pull_request.merged == true
+        uses: tsickert/discord-webhook@v5.0.0
+        with:
+          webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          content: |
+            🔀 **Pull Request merged successfully!**
+            
+            **Repositório:** ${{ github.repository }}
+            **Autor do PR:** ${{ github.event.pull_request.user.login }}
+            **Merged por:** ${{ github.actor }}
+            **Título do PR:** ${{ github.event.pull_request.title }}
+            **Branch mergeado:** `${{ github.event.pull_request.head.ref }}` → `${{ github.event.pull_request.base.ref }}`
+            
+            📦 **Descrição:** 
+            ${{ github.event.pull_request.body || 'Nenhuma descrição fornecida' }}
+            
+            🔗 [Ver PR #${{ github.event.pull_request.number }}](${{ github.event.pull_request.html_url }})
+            
+            ✅ **CI/CD executado com sucesso!**
