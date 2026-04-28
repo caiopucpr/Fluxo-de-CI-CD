@@ -29,4 +29,9 @@ class Calculator {
   }
 }
 
+  // Nova função: calcula potência
+  power(base, exponent) {
+    return Math.pow(base, exponent);
+  }
+
 module.exports = Calculator;
