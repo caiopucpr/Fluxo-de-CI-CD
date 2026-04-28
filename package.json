@@ -1,0 +1,11 @@
+{
+  "name": "fluxo-ci-cd-testes",
+  "version": "1.0.0",
+  "description": "Projeto com testes unitários para GitHub Actions",
+  "scripts": {
+    "test": "jest"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}
