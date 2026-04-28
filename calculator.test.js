@@ -48,4 +48,11 @@ describe('Testes unitários da Calculadora', () => {
     expect(calc.isEven(7)).toBe(false);
     expect(calc.isEven(0)).toBe(true);
   });
+  
+    // Teste 7: Potência
+  test('Teste 7: Deve calcular potência corretamente', () => {
+    expect(calc.power(2, 3)).toBe(8);
+    expect(calc.power(5, 0)).toBe(1);
+    expect(calc.power(10, 1)).toBe(10);
+  });
 });
